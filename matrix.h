@@ -122,7 +122,7 @@ class matrix
 		//
 		double* operator[](unsigned int row);
  
-		// const version of above - throws an exception if indices are out of
+    // const version of above - throws an exception if indices are out of
 		// range
 		//
 		// throw (matrixException)

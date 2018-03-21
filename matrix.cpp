@@ -12,13 +12,28 @@ matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols)
 	this->the_matrix = new double*[rows];
 	for (unsigned int i = 0; i < rows; ++i) {
 		this->the_matrix[i] = new double[cols];
+
 	}
-    return this;
+	this->clear();
+
+//    return this;
 }
 
 //TODO Copy constructor
 matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 {
+	//create new matrix
+	this->the_matrix = new double*[rows];
+	for (unsigned int i = 0; i < rows; ++i) {
+		this->the_matrix[i] = new double[cols];
+	}
+
+	//copy matrix;
+	for (unsigned int m = 0; m < rows; ++m) {
+		for (unsigned int n = 0; n < cols; ++n) {
+			this->the_matrix[m][n] = from.the_matrix[m][n];
+		}
+	}
 
 
 }
@@ -26,7 +41,10 @@ matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 //TODO Destructor
 matrix::~matrix()
 {
-	// stub
+		for (unsigned int i = 0; i < cols; ++i) {
+			delete [] this->the_matrix[i];
+		}
+		delete [] this->the_matrix;
 }
 
 // Assignment operator
@@ -43,6 +61,7 @@ matrix& matrix::operator=(const matrix& rhs)
 	this->rows = rhs.rows;
 
 	double** tempMatrix = new double*[rows];
+
 	for (unsigned int i = 0; i < rows; ++i) {
 		tempMatrix[i] = new double[cols];
 	}
@@ -61,13 +80,12 @@ matrix& matrix::operator=(const matrix& rhs)
 // Named constructor (static)
 matrix matrix::identity(unsigned int size)
 {
-    if(size == 0) throw matrixException("size can not be zero");
+	if(size == 0) throw matrixException("size can not be zero");
 
-    matrix idMatrix = matrix(size,size);
-    for (unsigned int i = 0; i < size; ++i) {
-        idMatrix.the_matrix[i][i] = 1;
-    }
-
+	matrix idMatrix = matrix(size,size);
+	for (unsigned int i = 0; i < size; ++i) {
+		idMatrix.the_matrix[i][i] = 1;
+	}
     return idMatrix;
 }
 
@@ -75,29 +93,27 @@ matrix matrix::identity(unsigned int size)
 // Binary operations
 matrix matrix::operator+(const matrix& rhs) const
 {
-    if(!((this->rows==rhs.rows)&&(this->cols==rhs.cols))) throw matrixException("Non-square matrix");
-	matrix retVal(rhs);
+    if(!((this->rows==rhs.rows)&&(this->cols==rhs.cols))) throw matrixException("Matrices are not of the same size ");
+	matrix retVal(rows,cols);
     for (unsigned int m = 0; m < this->rows ; ++m) {
         for (unsigned int n = 0; n < this->cols; ++n) {
-            retVal.the_matrix[m][n]+=rhs.the_matrix[m][n];
+            retVal.the_matrix[m][n]= this->the_matrix[m][n]+rhs.the_matrix[m][n];
         }
     }
 
 	return retVal;
 }
 
-
+//multiplication
 matrix matrix::operator*(const matrix& rhs) const
 {
     if(!(this->cols==rhs.rows)) throw matrixException("The number of columns in A must equal the number of rows in B.");
-	matrix retVal(rhs);
-    for (unsigned int m = 0; m < this->rows ; ++m) {
-        for (unsigned int n = 0; n < rhs.cols; ++n) {
-            double elementSum = 0;
-            for (unsigned int i = 0; i < this->rows; ++i) {
-                elementSum+= this->the_matrix[m][i] * rhs.the_matrix[i][n];
+	matrix retVal(this->rows, rhs.cols);
+    for (unsigned int m = 0; m < this->rows ; m++) {
+        for (unsigned int n = 0; n < rhs.cols; n++) {
+            for (unsigned int i = 0; i < rhs.rows; i++) {
+                retVal[m][n]+= this->the_matrix[m][i]*rhs[i][n];
             }
-            retVal.the_matrix[m][n] = elementSum;
         }
 
     }
@@ -117,7 +133,7 @@ matrix matrix::operator*(const double scale) const
 }
 
 
-//Unary operations
+//tran operations
 matrix matrix::operator~() const
 {
 	matrix retVal(this->cols,this->rows);
@@ -128,35 +144,61 @@ matrix matrix::operator~() const
         }
     }
 
+
 	return retVal;
 }
 	
 //TODO clear
 void matrix::clear()
 {
-	// stub
+	if(rows < 1 || cols < 1) throw matrixException("[from clear()] matrix not initialized");
+	for (unsigned int m = 0; m <rows ; ++m) {
+		for (unsigned int n = 0; n < cols; ++n) {
+			this->the_matrix[m][n] = 0;
+
+		}
+	}
 	return;
 }
-//TODO get row
+//get row
 double* matrix::operator[](unsigned int row)
 {
-	// stub
-	return NULL;
+	if(((row <  0)&&(row > this->rows))) {
+		throw matrixException("Row index is out of bounds");
+	}
+	return this->the_matrix[row];
 }
 
 double* matrix::operator[](unsigned int row) const
 {
-	// stub
-	return NULL;
+	if(((row < 0)&&(row > this->rows))) {
+		throw matrixException("Row index is out of bounds");
+	}
+	return this->the_matrix[row];
 }
 
 
 std::ostream& matrix::out(std::ostream& os) const
 {
-    for (unsigned int m = 1; m <= this->rows ; ++m) {
-        for (unsigned int n = 1; n <= this->cols; ++n) {
-            os << "| " << 	os.=	}
-    }
+		for (unsigned int m = 0; m < this->rows; ++m) {
+			(m==0)? (os<< "[[") : (os<< " [");
+
+			for (unsigned int n = 0; n < this->cols; ++n) {
+				if (n != this->cols-1) {
+					os << " " << this->the_matrix[m][n] << ",";
+
+				} else {
+					os << " " << this->the_matrix[m][n];
+				}
+			}
+			if(m == this->rows - 1) {
+				os << "]]" << std::endl;
+
+			} else{
+				os << "]" << std::endl;
+			}
+		}
+
 	return os;	
 }
 
@@ -165,17 +207,15 @@ std::ostream& matrix::out(std::ostream& os) const
 // Global insertion and operator
 std::ostream& operator<<(std::ostream& os, const matrix& rhs)
 {
-	// stub
-
+	rhs.out(os);
 	return os;
 }
 
 // Global scalar multiplication
 matrix operator*(const double scale, const matrix& rhs)
 {
-	// stub
 	matrix retval(rhs);
-	return retval;
+	return retval*scale;
 }
 
 
