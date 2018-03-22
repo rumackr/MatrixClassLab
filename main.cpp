@@ -51,8 +51,8 @@ int main(void)
     cout << m5*m6;
     cout << "  -------- m5 + m5 + m5 ---------"<<endl;
     cout << m5+ m5 + m5;
-    cout << "  -------- m5*2 ---------"<<endl;
-    cout << m5*2;
+    cout << "  -------- m5*3 ---------"<<endl;
+    cout << m5*3;
     cout << "  -------- m1=~m5 ---------"<<endl;
     m1 =(~m5);
     cout << m1;

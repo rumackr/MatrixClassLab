@@ -41,10 +41,10 @@ matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 //TODO Destructor
 matrix::~matrix()
 {
-		for (unsigned int i = 0; i < cols; ++i) {
-			delete [] this->the_matrix[i];
+		for (unsigned int i = 0; i < rows; ++i) {
+				delete [] this->the_matrix[i];
 		}
-		delete [] this->the_matrix;
+		delete[] this->the_matrix;
 }
 
 // Assignment operator
@@ -143,6 +143,7 @@ matrix matrix::operator~() const
             retVal.the_matrix[n-1][m-1] = this->the_matrix[m-1][n-1];
         }
     }
+
 
 
 	return retVal;
