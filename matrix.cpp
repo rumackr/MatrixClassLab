@@ -2,10 +2,14 @@
  * @author Reid Rumack
  * @file matrix.cpp
  * @date 3/21/2018
+ * @lab lab 2
  *
- * Defines a matrix class and provides
+ *
+ * Defines a matrix class and provides overloaded operators
+ * to allow for you do matrix math. indexes from 0
  *
  */
+
 #include "matrix.h"
 #include <string>
 #include <cmath>
@@ -120,7 +124,9 @@ matrix matrix::operator+(const matrix& rhs) const
 //multiplication
 matrix matrix::operator*(const matrix& rhs) const
 {
-    if(!(this->cols==rhs.rows)) throw matrixException("The number of columns in A must equal the number of rows in B.");
+    if(this->cols!=rhs.rows)
+        throw matrixException("The number of columns in A must equal the number of rows in B.");
+
 	matrix retVal(this->rows, rhs.cols);
     for (unsigned int m = 0; m < this->rows ; m++) {
         for (unsigned int n = 0; n < rhs.cols; n++) {
