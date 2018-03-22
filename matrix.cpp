@@ -13,7 +13,7 @@
 #include "matrix.h"
 #include <string>
 #include <cmath>
-#define
+
 // Parameterized constructor
 matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols) 
 {  
@@ -29,6 +29,7 @@ matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols)
 	}
 	//sets values to 0
 	this->clear();
+
 
 }
 
@@ -110,7 +111,8 @@ matrix matrix::identity(unsigned int size)
 // Binary operations
 matrix matrix::operator+(const matrix& rhs) const
 {
-    if(!((this->rows==rhs.rows)&&(this->cols==rhs.cols))) throw matrixException("Matrices are not of the same size ");
+    if(!((this->rows==rhs.rows)&&(this->cols==rhs.cols)))
+		throw matrixException("Matrices are not of the same size ");
 	matrix retVal(rows,cols);
     for (unsigned int m = 0; m < this->rows ; ++m) {
         for (unsigned int n = 0; n < this->cols; ++n) {
@@ -124,9 +126,10 @@ matrix matrix::operator+(const matrix& rhs) const
 //multiplication
 matrix matrix::operator*(const matrix& rhs) const
 {
-    if(this->cols!=rhs.rows)
-        throw matrixException("The number of columns in A must equal the number of rows in B.");
-
+    if(this->cols!=rhs.rows) {
+		throw matrixException(
+				"The number of columns in A must equal the number of rows in B.");
+	}
 	matrix retVal(this->rows, rhs.cols);
     for (unsigned int m = 0; m < this->rows ; m++) {
         for (unsigned int n = 0; n < rhs.cols; n++) {
@@ -183,15 +186,16 @@ void matrix::clear()
 //get ro
 double* matrix::operator[](unsigned int row)
 {
-	if(((row <  0)&&(row > this->rows))) {
+	if((row <  0)||(row >= this->rows)) {
 		throw matrixException("Row index is out of bounds");
 	}
 	return this->the_matrix[row];
 }
 
+
 double* matrix::operator[](unsigned int row) const
 {
-	if(((row < 0)&&(row > this->rows))) {
+	if(((row < 0)||(row >= this->rows))) {
 		throw matrixException("Row index is out of bounds");
 	}
 	return this->the_matrix[row];
