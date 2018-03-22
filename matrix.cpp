@@ -1,7 +1,15 @@
+/**
+ * @author Reid Rumack
+ * @file matrix.cpp
+ * @date 3/21/2018
+ *
+ * Defines a matrix class and provides
+ *
+ */
 #include "matrix.h"
 #include <string>
 #include <cmath>
-
+#define
 // Parameterized constructor
 matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols) 
 {  
@@ -9,17 +17,18 @@ matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols)
 	{
 		throw matrixException("p-constructor bad arguments");
 	}
+	//creates new matrix
 	this->the_matrix = new double*[rows];
 	for (unsigned int i = 0; i < rows; ++i) {
 		this->the_matrix[i] = new double[cols];
 
 	}
+	//sets values to 0
 	this->clear();
 
-//    return this;
 }
 
-//TODO Copy constructor
+//Copy constructor
 matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 {
 	//create new matrix
@@ -38,7 +47,7 @@ matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 
 }
 
-//TODO Destructor
+//Destructor
 matrix::~matrix()
 {
 		for (unsigned int i = 0; i < rows; ++i) {
@@ -50,6 +59,11 @@ matrix::~matrix()
 // Assignment operator
 matrix& matrix::operator=(const matrix& rhs)
 {
+	if (rhs.rows < 1 || rhs.cols < 1)
+	{
+		throw matrixException("invalid matrix size");
+	}
+	// deletes the values in this matrix
 	if (the_matrix != NULL){
 		for (unsigned int i = 0; i < cols; ++i) {
 			delete [] this->the_matrix[i];
@@ -59,13 +73,12 @@ matrix& matrix::operator=(const matrix& rhs)
 
 	this->cols = rhs.cols;
 	this->rows = rhs.rows;
-
+	//inits new matrix
 	double** tempMatrix = new double*[rows];
-
 	for (unsigned int i = 0; i < rows; ++i) {
 		tempMatrix[i] = new double[cols];
 	}
-
+	//copys values
 	for (unsigned int i = 0; i < rows; ++i) {
 		for (unsigned int j = 0; j < cols; ++j) {
 			tempMatrix[i][j] = rhs.the_matrix[i][j];
@@ -119,7 +132,7 @@ matrix matrix::operator*(const matrix& rhs) const
     }
 	return retVal;
 }
-
+// scales matrix
 matrix matrix::operator*(const double scale) const
 {
     matrix retVal(*this);
@@ -133,14 +146,14 @@ matrix matrix::operator*(const double scale) const
 }
 
 
-//tran operations
+///Transpose operation
 matrix matrix::operator~() const
 {
 	matrix retVal(this->cols,this->rows);
 
-    for (unsigned int m = 1; m <= this->rows ; ++m) {
-        for (unsigned int n = 1; n <= this->cols; ++n) {
-            retVal.the_matrix[n-1][m-1] = this->the_matrix[m-1][n-1];
+    for (unsigned int m = 0; m < this->rows ; ++m) {
+        for (unsigned int n = 0; n < this->cols; ++n) {
+            retVal.the_matrix[n][m] = this->the_matrix[m][n];
         }
     }
 
@@ -149,7 +162,7 @@ matrix matrix::operator~() const
 	return retVal;
 }
 	
-//TODO clear
+//clear- sets all values to 0
 void matrix::clear()
 {
 	if(rows < 1 || cols < 1) throw matrixException("[from clear()] matrix not initialized");
@@ -161,7 +174,7 @@ void matrix::clear()
 	}
 	return;
 }
-//get row
+//get ro
 double* matrix::operator[](unsigned int row)
 {
 	if(((row <  0)&&(row > this->rows))) {
@@ -178,7 +191,7 @@ double* matrix::operator[](unsigned int row) const
 	return this->the_matrix[row];
 }
 
-
+///out stream definition for the matrix class
 std::ostream& matrix::out(std::ostream& os) const
 {
 		for (unsigned int m = 0; m < this->rows; ++m) {
